@@ -192,19 +192,25 @@ func (m *Snapshot) Reset()         { *m = Snapshot{} }
 func (m *Snapshot) String() string { return proto.CompactTextString(m) }
 func (*Snapshot) ProtoMessage()    {}
 
+// 在etcd-raft模块中，Message是所有消息的抽象，包括各类型消息所需的类型
 type Message struct {
-	Type             MessageType `protobuf:"varint,1,req,name=type,enum=raftpb.MessageType" json:"type"`
-	To               uint64      `protobuf:"varint,2,req,name=to" json:"to"`
-	From             uint64      `protobuf:"varint,3,req,name=from" json:"from"`
-	Term             uint64      `protobuf:"varint,4,req,name=term" json:"term"`
-	LogTerm          uint64      `protobuf:"varint,5,req,name=logTerm" json:"logTerm"`
-	Index            uint64      `protobuf:"varint,6,req,name=index" json:"index"`
-	Entries          []Entry     `protobuf:"bytes,7,rep,name=entries" json:"entries"`
-	Commit           uint64      `protobuf:"varint,8,req,name=commit" json:"commit"`
-	Snapshot         Snapshot    `protobuf:"bytes,9,req,name=snapshot" json:"snapshot"`
-	Reject           bool        `protobuf:"varint,10,req,name=reject" json:"reject"`
-	RejectHint       uint64      `protobuf:"varint,11,req,name=rejectHint" json:"rejectHint"`
-	XXX_unrecognized []byte      `json:"-"`
+	// 消息类型，etcd-raft共定义了19种数据类型
+	Type MessageType `protobuf:"varint,1,req,name=type,enum=raftpb.MessageType" json:"type"`
+	// 消息的目标节点ID
+	To uint64 `protobuf:"varint,2,req,name=to" json:"to"`
+	// 发送消息的节点ID
+	From uint64 `protobuf:"varint,3,req,name=from" json:"from"`
+	// 发送消息的节点的term值。如果term值为0，则为本地消息，在etcd-raft模块中，对本地消息进行特殊处理。
+	Term uint64 `protobuf:"varint,4,req,name=term" json:"term"`
+	// 该消息携带的第一条Entry记录的Term值
+	LogTerm          uint64   `protobuf:"varint,5,req,name=logTerm" json:"logTerm"`
+	Index            uint64   `protobuf:"varint,6,req,name=index" json:"index"`
+	Entries          []Entry  `protobuf:"bytes,7,rep,name=entries" json:"entries"`
+	Commit           uint64   `protobuf:"varint,8,req,name=commit" json:"commit"`
+	Snapshot         Snapshot `protobuf:"bytes,9,req,name=snapshot" json:"snapshot"`
+	Reject           bool     `protobuf:"varint,10,req,name=reject" json:"reject"`
+	RejectHint       uint64   `protobuf:"varint,11,req,name=rejectHint" json:"rejectHint"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *Message) Reset()         { *m = Message{} }

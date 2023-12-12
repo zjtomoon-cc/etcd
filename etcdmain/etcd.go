@@ -53,6 +53,7 @@ func Main() {
 	if !shouldProxy {
 		stopped, err = startEtcd(cfg)
 		if err == discovery.ErrFullCluster && cfg.shouldFallbackToProxy() {
+
 			log.Printf("etcd: discovery cluster full, falling back to %s", fallbackFlagProxy)
 			shouldProxy = true
 		}
