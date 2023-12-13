@@ -21,6 +21,10 @@
 // etcd binary, work in the `github.com/coreos/etcd/etcdmain` package.
 //
 
+// etcd v3和etcd v2区别
+
+// etcd v3中使用BoltDB作为持久存储，而ercd v2则是全内存实现
+
 package main
 
 import (

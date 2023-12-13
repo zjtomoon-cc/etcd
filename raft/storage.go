@@ -35,22 +35,28 @@ var ErrUnavailable = errors.New("requested entry at index is unavailable")
 // become inoperable and refuse to participate in elections; the
 // application is responsible for cleanup and recovery in this case.
 type Storage interface {
+	// 返回Storage中记录的状态信息，返回的是HardState实例和ConfState实例
 	// InitialState returns the saved HardState and ConfState information.
 	InitialState() (pb.HardState, pb.ConfState, error)
+	// 在storage中记录了当前节点的所有Entry记录，Entries方法返回指定范围的Entry记录
 	// Entries returns a slice of log entries in the range [lo,hi).
 	Entries(lo, hi uint64) ([]pb.Entry, error)
+	// 查询指定Index对应的Entry的Term值
 	// Term returns the term of entry i, which must be in the range
 	// [FirstIndex()-1, LastIndex()]. The term of the entry before
 	// FirstIndex is retained for matching purposes even though the
 	// rest of that entry may not be available.
 	Term(i uint64) (uint64, error)
+	// 返回最后一条Entry索引值
 	// LastIndex returns the index of the last entry in the log.
 	LastIndex() (uint64, error)
+	// 返回第一条Entry索引值
 	// FirstIndex returns the index of the first log entry that is
 	// possibly available via Entries (older entries have been incorporated
 	// into the latest Snapshot; if storage only contains the dummy entry the
 	// first log entry is not available).
 	FirstIndex() (uint64, error)
+	// 返回最近一次生成的快照数据
 	// Snapshot returns the most recent snapshot.
 	Snapshot() (pb.Snapshot, error)
 }

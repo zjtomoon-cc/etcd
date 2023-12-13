@@ -203,14 +203,20 @@ type Message struct {
 	// 发送消息的节点的term值。如果term值为0，则为本地消息，在etcd-raft模块中，对本地消息进行特殊处理。
 	Term uint64 `protobuf:"varint,4,req,name=term" json:"term"`
 	// 该消息携带的第一条Entry记录的Term值
-	LogTerm          uint64   `protobuf:"varint,5,req,name=logTerm" json:"logTerm"`
-	Index            uint64   `protobuf:"varint,6,req,name=index" json:"index"`
-	Entries          []Entry  `protobuf:"bytes,7,rep,name=entries" json:"entries"`
-	Commit           uint64   `protobuf:"varint,8,req,name=commit" json:"commit"`
-	Snapshot         Snapshot `protobuf:"bytes,9,req,name=snapshot" json:"snapshot"`
-	Reject           bool     `protobuf:"varint,10,req,name=reject" json:"reject"`
-	RejectHint       uint64   `protobuf:"varint,11,req,name=rejectHint" json:"rejectHint"`
-	XXX_unrecognized []byte   `json:"-"`
+	LogTerm uint64 `protobuf:"varint,5,req,name=logTerm" json:"logTerm"`
+	// 记录了一个索引值，该索引值的具体含义与消息的类型相关。
+	Index uint64 `protobuf:"varint,6,req,name=index" json:"index"`
+	// 如果是MsgApp类型的消息，则该字段中保存了Leader节点复制到Follower节点的Entry记录
+	Entries []Entry `protobuf:"bytes,7,rep,name=entries" json:"entries"`
+	// 消息发送节点的提交位置
+	Commit uint64 `protobuf:"varint,8,req,name=commit" json:"commit"`
+	// 传输快照时，该字段保存了快照数据
+	Snapshot Snapshot `protobuf:"bytes,9,req,name=snapshot" json:"snapshot"`
+	// 主要用于响应类型的消息，表示是否拒绝收到的消息。
+	Reject bool `protobuf:"varint,10,req,name=reject" json:"reject"`
+	// 在Follower节点拒绝Leader节点的消息之后，会在该字段记录一个Entry索引值供Leader节点
+	RejectHint       uint64 `protobuf:"varint,11,req,name=rejectHint" json:"rejectHint"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *Message) Reset()         { *m = Message{} }
