@@ -20,6 +20,8 @@ import (
 	pb "github.com/coreos/etcd/raft/raftpb"
 )
 
+// 无论是Leader节点还是Follower节点，对于刚刚接收到的Entry记录首先会被存储在unstable中。
+// 然后按照raft协议将unstable中缓存的这些Entry记录交给上层模块进行处理，上层模块会将这些Entry记录发送到集群其他节点或进行保存（写入Storage中）
 // unstable.entris[i] has raft log position i+unstable.offset.
 // Note that unstable.offset may be less than the highest log
 // position in storage; this means that the next write to storage
